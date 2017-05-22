@@ -18,6 +18,21 @@ var lens = compose(Lens.ofProp("address"))(Lens.ofProp("street"))
 
 doc(function() {
   describe("Lens", function() {
+    describe("#Id", function() {
+      it("should be the top level lens", function() {
+        const obj = {
+          name: "Andy Z."
+        }
+
+        assert.deepStrictEqual(Lens.view(Lens.Id)(obj), { name: "Andy Z." })
+        assert.deepStrictEqual(Lens.over(Lens.Id)(x => {
+          x.name = "Andy"
+
+          return x
+        })(obj), { name: "Andy" })
+      })
+    })
+
     describe("#over", function() {
       it("should reach inside an object and update", function() {
         assert.deepStrictEqual(Lens.over(lens)(x => x.toUpperCase())(obj), {

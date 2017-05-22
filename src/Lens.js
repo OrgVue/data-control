@@ -6,6 +6,10 @@ const compose = require("./compose.js")
 const Const = require("./Const.js")
 const Identity = require("./Identity.js")
 
+// Id :: Lens (Object String a) (Object Sring b) a b
+const Id = f => obj => f(obj)
+
+// K :: a -> b -> a
 const K = x => _ => x
 
 // ofProp :: String -> Lens (Object String a) (Object String b) a b
@@ -39,6 +43,7 @@ const view = lens => s => lens(Const)(s).x
 
 // Exports.
 module.exports = {
+  Id: Id,
   ofProp: ofProp,
   over: over,
   set: set,
