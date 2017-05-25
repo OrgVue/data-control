@@ -6,7 +6,7 @@
 // Imports.
 const mixin = require("./mixin.js")
 
-// data Task e a = Task (e -> (), a -> ()) -> ()
+// data Task e a = Task ((e -> ()) -> (a -> ()) -> ())
 // ${doc.Task.Task}
 function Task(fork) {
   if (!(this instanceof Task)) return new Task(fork)
@@ -17,12 +17,16 @@ function Task(fork) {
 // bind :: (a -> Task e b) -> Task e a -> Task e b
 // ${doc.Task.bind}
 Task.prototype.bind = function(f) {
-  return Task((rej, res) => this.fork(rej, x => f(x).fork(rej, res)))
+  const m = this
+
+  return Task((rej, res) => m.fork(rej, x => f(x).fork(rej, res)))
 }
 
 // map :: (a -> b) -> Task e a -> Task e b
 Task.prototype.map = function(f) {
-  return Task((rej, res) => this.fork(rej, x => res(f(x))))
+  const m = this
+
+  return Task((rej, res) => m.fork(rej, x => res(f(x))))
 }
 
 // of :: a -> Task e a

@@ -16,13 +16,17 @@ function IO(unsafe) {
 // bind :: (a -> IO b) -> IO a -> IO b
 // ${doc.IO.bind}
 IO.prototype.bind = function(f) {
-  return IO(() => f(this.unsafe()).unsafe())
+  const m = this
+
+  return IO(() => f(m.unsafe()).unsafe())
 }
 
 // map :: (a -> b) -> IO a -> IO b
 // ${doc.IO.map}
 IO.prototype.map = function(f) {
-  return IO(() => f(this.unsafe()))
+  const m = this
+
+  return IO(() => f(m.unsafe()))
 }
 
 // of :: a -> IO a
