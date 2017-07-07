@@ -6,10 +6,12 @@
 // Imports.
 const mixin = require("./mixin.js")
 
+const fromTask = task => ret => IO(() => task.fork(() => undefined, ret))
+
 // data IO a = IO (() -> a)
 function IO(unsafe) {
   if (!(this instanceof IO)) return new IO(unsafe)
-  
+
   this.unsafe = unsafe
 }
 
@@ -35,5 +37,6 @@ const of = x => IO(() => x)
 
 // Exports.
 module.exports = mixin({
+  fromTask: fromTask,
   of: of
 })(IO)
