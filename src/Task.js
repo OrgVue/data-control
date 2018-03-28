@@ -10,7 +10,7 @@ const mixin = require("./mixin.js")
 // ${doc.Task.Task}
 function Task(fork) {
   if (!(this instanceof Task)) return new Task(fork)
-  
+
   this.fork = fork
 }
 
@@ -33,7 +33,12 @@ Task.prototype.map = function(f) {
 // ${doc.Task.of}
 const of = x => Task((_, res) => res(x))
 
+// sequence :: [Task e a] -> Task e [a]
+const sequence = ts =>
+  ts.reduce((rs, t) => t.bind(x => rs.map(r => r.concat([x]))), Task.of([]))
+
 // Exports.
 module.exports = mixin({
-  of: of
+  of,
+  sequence
 })(Task)
