@@ -34,8 +34,8 @@ Task.prototype.map = function(f) {
 const of = x => Task((_, res) => res(x))
 
 // sequence :: [Task e a] -> Task e [a]
-const sequence = ts =>
-  ts.reduce((rs, t) => t.bind(x => rs.map(r => r.concat([x]))), Task.of([]))
+const sequence = ms =>
+  ms.reduce((r, m) => r.bind(t => m.map(x => t.concat([x]))), Task.of([]))
 
 // Exports.
 module.exports = mixin({
