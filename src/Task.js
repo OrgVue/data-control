@@ -37,8 +37,23 @@ const of = x => Task((_, res) => res(x))
 const sequence = ms =>
   ms.reduce((r, m) => r.bind(t => m.map(x => t.concat([x]))), Task.of([]))
 
+const doM = steps => Task((err, res) => {
+  const gen = steps()
+  const step = value => {
+    const result = gen.next(value)
+    if (result.done) {
+      return result.value
+    }
+
+    return result.value.bind(step)
+  }
+
+  step().fork(err, res)
+})
+
 // Exports.
 module.exports = mixin({
+  doM,
   of,
   sequence
 })(Task)
