@@ -62,6 +62,19 @@ doc(function() {
         assert.strictEqual(r, "Error")
       })
     })
+
+    describe("#doM", function() {
+      it("should perform a generator of tasks in order", function() {
+        Task.doM(function*() {
+          const a = yield Task.of("foo")
+          const b = yield Task.of("bar")
+
+          return Task.of(a + b)
+        }).fork(nop, effect)
+
+        assert.strictEqual(r, "foobar")
+      })
+    })
   })
 })
 
