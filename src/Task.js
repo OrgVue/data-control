@@ -51,9 +51,12 @@ const doM = steps => Task((err, res) => {
   step().fork(err, res)
 })
 
+const toPromise = task => new Promise((res, rej) => task.fork(rej, res))
+
 // Exports.
 module.exports = mixin({
   doM,
   of,
-  sequence
+  sequence,
+  toPromise
 })(Task)
