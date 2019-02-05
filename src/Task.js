@@ -76,10 +76,16 @@ const foldM = (f, init) => (ms) =>
     }
   })
 
+const toPromise = task => new Promise((res, rej) => task.fork(rej, res))
+
+const fromPromise = promise => Task((rej, res) => promise.then(res, rej))
+
 // Exports.
 module.exports = mixin({
   doM,
   foldM,
+  fromPromise,
   of,
-  sequence
+  sequence,
+  toPromise
 })(Task)
