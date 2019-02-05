@@ -51,9 +51,35 @@ const doM = steps => Task((err, res) => {
   step().fork(err, res)
 })
 
+// foldM :: (a -> b -> Task e a) -> a -> [b] -> Task e a
+const foldM = (f, init) => (ms) =>
+  Task((rej, res) => {
+    let cancelled = undefined
+    let result = init
+    const _ = (i) => {
+      if (i >= ms.length) {
+        res(result)
+      } else if (cancelled === undefined) {
+        f(result, ms[i]).fork(rej, (x) => {
+          result = x
+          setTimeout(_, 21, i + 1)
+        })
+      } else {
+        rej(cancelled)
+      }
+    }
+
+    _(0)
+
+    return (reason) => {
+      cancelled = reason
+    }
+  })
+
 // Exports.
 module.exports = mixin({
   doM,
+  foldM,
   of,
   sequence
 })(Task)
