@@ -75,6 +75,28 @@ doc(function() {
         assert.strictEqual(r, "foobar")
       })
     })
+
+    describe("#foldM", function() {
+      it("should fold using a bindable function", function(done) {
+        Task.foldM((acc, item) => Task((err, res) => {
+          res(acc + item)
+        }), 0)([1,2,3,4,5]).fork(done.fail, res => {
+          assert.strictEqual(res, 15)
+          done()
+        })
+      })
+
+      it("should be cancelable", function(done) {
+        const cancel = Task.foldM((acc, item) => Task((err, res) => {
+          res(acc + item)
+        }), 0)([1,2,3,4,5]).fork(err => {
+          assert.strictEqual(err, "foobar")
+          done()
+        }, done.fail)
+
+        cancel("foobar") // foldM calls asynchronously, which is why this should work
+      })
+    })
   })
 })
 
