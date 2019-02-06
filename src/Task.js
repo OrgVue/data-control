@@ -52,7 +52,7 @@ const doM = steps => Task((err, res) => {
 })
 
 // foldM :: (a -> b -> Task e a) -> a -> [b] -> Task e a
-const foldM = (f, init) => (ms) =>
+const foldM = (f, init, { delay = 21 } = {}) => (ms) =>
   Task((rej, res) => {
     let cancelled = undefined
     let result = init
@@ -62,7 +62,7 @@ const foldM = (f, init) => (ms) =>
       } else if (cancelled === undefined) {
         f(result, ms[i]).fork(rej, (x) => {
           result = x
-          setTimeout(_, 21, i + 1)
+          setTimeout(_, delay, i + 1)
         })
       } else {
         rej(cancelled)
