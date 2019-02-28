@@ -20,7 +20,7 @@ Task.prototype.bind = function(f) {
   const m = this
 
   return Task((rej, res, env) =>
-    m.fork(rej, x => f(x).fork(rej, res, env), env)
+    m.fork(rej, (x) => f(x).fork(rej, res, env), env),
   )
 }
 
@@ -28,21 +28,21 @@ Task.prototype.bind = function(f) {
 Task.prototype.map = function(f) {
   const m = this
 
-  return Task((rej, res, env) => m.fork(rej, x => res(f(x)), env))
+  return Task((rej, res, env) => m.fork(rej, (x) => res(f(x)), env))
 }
 
 // of :: a -> Task e a
 // ${doc.Task.of}
-const of = x => Task((_, res) => res(x))
+const of = (x) => Task((_, res) => res(x))
 
 // sequence :: [Task e a] -> Task e [a]
-const sequence = ms =>
-  ms.reduce((r, m) => r.bind(t => m.map(x => t.concat([x]))), Task.of([]))
+const sequence = (ms) =>
+  ms.reduce((r, m) => r.bind((t) => m.map((x) => t.concat([x]))), Task.of([]))
 
-const doM = steps =>
+const doM = (steps) =>
   Task((err, res, env) => {
     const gen = steps()
-    const step = value => {
+    const step = (value) => {
       const result = gen.next(value)
       if (result.done) {
         return result.value
@@ -55,21 +55,21 @@ const doM = steps =>
   })
 
 // foldM :: (a -> b -> Task e a) -> a -> [b] -> Task e a
-const foldM = (f, init, { delay = 21 } = {}) => ms =>
+const foldM = (f, init, { delay = 21 } = {}) => (ms) =>
   Task((rej, res, mon) => {
     let cancelled = undefined
     let result = init
-    const _ = i => {
+    const _ = (i) => {
       if (i >= ms.length) {
         res(result)
       } else if (cancelled === undefined) {
         f(result, ms[i]).fork(
           rej,
-          x => {
+          (x) => {
             result = x
             setTimeout(_, delay, i + 1)
           },
-          mon
+          mon,
         )
       } else {
         rej(cancelled)
@@ -78,14 +78,14 @@ const foldM = (f, init, { delay = 21 } = {}) => ms =>
 
     _(0)
 
-    return reason => {
+    return (reason) => {
       cancelled = reason
     }
   })
 
-const toPromise = task => new Promise((res, rej) => task.fork(rej, res))
+const toPromise = (task) => new Promise((res, rej) => task.fork(rej, res))
 
-const fromPromise = promise => Task((rej, res) => promise.then(res, rej))
+const fromPromise = (promise) => Task((rej, res) => promise.then(res, rej))
 
 // Exports.
 module.exports = mixin({
@@ -94,5 +94,5 @@ module.exports = mixin({
   fromPromise,
   of,
   sequence,
-  toPromise
+  toPromise,
 })(Task)
