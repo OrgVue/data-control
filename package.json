@@ -6,14 +6,15 @@
   "description": "",
   "devDependencies": {
     "crocodile": "file:///C:\\projects\\OrgVue\\Crocodile",
-    "groc": "^0.8.0"
+    "groc": "^0.8.0",
+    "mocha": "^6.0.2"
   },
   "homepage": "https://github.com/OrgVue/data-control#readme",
   "keywords": [
     "monad",
     "monads",
     "functional",
-    "asynch"
+    "async"
   ],
   "license": "MIT",
   "main": "index.js",

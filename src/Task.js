@@ -19,14 +19,16 @@ function Task(fork) {
 Task.prototype.bind = function(f) {
   const m = this
 
-  return Task((rej, res) => m.fork(rej, x => f(x).fork(rej, res)))
+  return Task((rej, res, env) =>
+    m.fork(rej, x => f(x).fork(rej, res, env), env)
+  )
 }
 
 // map :: (a -> b) -> Task e a -> Task e b
 Task.prototype.map = function(f) {
   const m = this
 
-  return Task((rej, res) => m.fork(rej, x => res(f(x))))
+  return Task((rej, res, env) => m.fork(rej, x => res(f(x)), env))
 }
 
 // of :: a -> Task e a
@@ -37,33 +39,38 @@ const of = x => Task((_, res) => res(x))
 const sequence = ms =>
   ms.reduce((r, m) => r.bind(t => m.map(x => t.concat([x]))), Task.of([]))
 
-const doM = steps => Task((err, res) => {
-  const gen = steps()
-  const step = value => {
-    const result = gen.next(value)
-    if (result.done) {
-      return result.value
+const doM = steps =>
+  Task((err, res, env) => {
+    const gen = steps()
+    const step = value => {
+      const result = gen.next(value)
+      if (result.done) {
+        return result.value
+      }
+
+      return result.value.bind(step)
     }
 
-    return result.value.bind(step)
-  }
-
-  step().fork(err, res)
-})
+    step().fork(err, res, env)
+  })
 
 // foldM :: (a -> b -> Task e a) -> a -> [b] -> Task e a
-const foldM = (f, init, { delay = 21 } = {}) => (ms) =>
-  Task((rej, res) => {
+const foldM = (f, init, { delay = 21 } = {}) => ms =>
+  Task((rej, res, mon) => {
     let cancelled = undefined
     let result = init
-    const _ = (i) => {
+    const _ = i => {
       if (i >= ms.length) {
         res(result)
       } else if (cancelled === undefined) {
-        f(result, ms[i]).fork(rej, (x) => {
-          result = x
-          setTimeout(_, delay, i + 1)
-        })
+        f(result, ms[i]).fork(
+          rej,
+          x => {
+            result = x
+            setTimeout(_, delay, i + 1)
+          },
+          mon
+        )
       } else {
         rej(cancelled)
       }
@@ -71,7 +78,7 @@ const foldM = (f, init, { delay = 21 } = {}) => (ms) =>
 
     _(0)
 
-    return (reason) => {
+    return reason => {
       cancelled = reason
     }
   })
