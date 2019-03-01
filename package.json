@@ -4,11 +4,7 @@
     "url": "https://github.com/OrgVue/data-control/issues"
   },
   "description": "",
-  "devDependencies": {
-    "crocodile": "file:///C:\\projects\\OrgVue\\Crocodile",
-    "groc": "^0.8.0",
-    "mocha": "^6.0.2"
-  },
+  "devDependencies": {},
   "homepage": "https://github.com/OrgVue/data-control#readme",
   "keywords": [
     "monad",
