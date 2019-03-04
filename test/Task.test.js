@@ -7,7 +7,7 @@ const Task = require("../src/Task.js")
 
 var r
 
-// doc(function() {
+doc(function() {
   describe("Task", function() {
     // describe('#ap', function() {
     //   it('should apply one functor to another', function() {
@@ -126,7 +126,7 @@ var r
       })
     })
   })
-// })
+})()
 
 function nop() {}
 
