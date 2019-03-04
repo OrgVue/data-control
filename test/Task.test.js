@@ -2,7 +2,7 @@
 
 const assert = require("assert")
 // const doc = require("crocodile").doc
-const doc = x => x
+const doc = x => x()
 const Task = require("../src/Task.js")
 
 var r
@@ -126,7 +126,7 @@ doc(function() {
       })
     })
   })
-})()
+})
 
 function nop() {}
 

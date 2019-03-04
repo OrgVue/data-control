@@ -2,7 +2,7 @@
 
 var assert = require("assert")
 //var doc = require("crocodile").doc
-const doc = x => x
+const doc = x => x()
 var IO = require("../src/IO.js")
 
 doc(function() {
@@ -29,4 +29,4 @@ doc(function() {
       })
     })
   })
-})()
+})
