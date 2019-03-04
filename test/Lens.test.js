@@ -1,7 +1,8 @@
 "use strict"
 
 const assert = require('assert')
-const doc = require('crocodile').doc 
+// const doc = require('crocodile').doc 
+const doc = x => x()
 const Lens = require('../src/Lens.js')
 
 const compose = g => f => x => g(f(x))
