@@ -1,12 +1,13 @@
 "use strict"
 
 const assert = require("assert")
-const doc = require("crocodile").doc
+// const doc = require("crocodile").doc
+const doc = x => x
 const Task = require("../src/Task.js")
 
 var r
 
-doc(function() {
+// doc(function() {
   describe("Task", function() {
     // describe('#ap', function() {
     //   it('should apply one functor to another', function() {
@@ -96,9 +97,36 @@ doc(function() {
 
         cancel("foobar") // foldM calls asynchronously, which is why this should work
       })
+      
+      it("should be cancelable (nested)", function (done) {
+
+        const toComplete = ['a', 'b', 'c']
+        const completed = []
+
+        const cancel = Task.foldM(
+          (acc, item) =>
+            Task((_, res) => {
+              acc.push(item)
+              return res(acc)
+            })
+              .bind(x => Task.foldM((agg, i) => Task((_, complete) => {
+                completed.push(i)
+                agg.push(i)
+                return complete(agg)
+
+              }), x)(toComplete))
+          , [])([1]).fork(err => {
+            assert.deepEqual(completed, ['a'])
+            assert.notDeepEqual(completed, ['a', 'b', 'c'])
+            assert.strictEqual(err, "foobar")
+            done()
+          }, done.fail)
+
+        cancel("foobar")
+      })
     })
   })
-})
+// })
 
 function nop() {}
 

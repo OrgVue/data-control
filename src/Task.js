@@ -58,12 +58,13 @@ const doM = (steps) =>
 const foldM = (f, init, { delay = 21 } = {}) => (ms) =>
   Task((rej, res, env) => {
     let cancelled = undefined
+    let innerCancel = undefined
     let result = init
     const _ = (i) => {
       if (i >= ms.length) {
         res(result)
       } else if (cancelled === undefined) {
-        f(result, ms[i]).fork(
+        innerCancel = f(result, ms[i]).fork(
           rej,
           (x) => {
             result = x
@@ -79,6 +80,9 @@ const foldM = (f, init, { delay = 21 } = {}) => (ms) =>
     _(0)
 
     return (reason) => {
+      if(typeof innerCancel === 'function') {
+        innerCancel(reason)
+      }
       cancelled = reason
     }
   })
