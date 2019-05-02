@@ -24,6 +24,16 @@ Task.prototype.bind = function(f) {
   )
 }
 
+// bind :: (a -> Task e b) -> Task e a -> Task e b
+// ${doc.Task.bindError}
+Task.prototype.bindError = function(f) {
+  const m = this
+
+  return Task((rej, res, env) =>
+    m.fork((e) => f(e).fork(rej, res, env), res, env),
+  )
+}
+
 // map :: (a -> b) -> Task e a -> Task e b
 Task.prototype.map = function(f) {
   const m = this
