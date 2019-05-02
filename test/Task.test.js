@@ -27,6 +27,16 @@ doc(function() {
       })
     })
 
+    describe("#bindError", function() {
+      it("should bind a function via the error of the fork", function() {
+        Task((err, res) => err("hello"))
+          .bindError(compose(Task.of, upper))
+          .fork(nop, effect)
+
+        assert.strictEqual(r, "HELLO")
+      })
+    })
+
     describe("#map", function() {
       it("should lift a function into functor space", function() {
         Task.of("foo")
