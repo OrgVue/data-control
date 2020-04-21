@@ -5,7 +5,7 @@
   },
   "description": "",
   "devDependencies": {
-    "jest": "^24.1.0"
+    "jest": "^25.3.0"
   },
   "homepage": "https://github.com/OrgVue/data-control#readme",
   "keywords": [
@@ -25,5 +25,5 @@
     "doc": "groc & crocodile",
     "test": "jest"
   },
-  "version": "0.2.1"
+  "version": "0.2.2"
 }
